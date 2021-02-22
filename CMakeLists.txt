@@ -14,7 +14,7 @@ endif ()
 
 # Options
 option(BUILD_TESTS "Build tests" ON)
-option(BUILD_TEASER_FPFH "Build TEASER++ wrappers for PCL FPFH estimation." OFF)
+option(BUILD_TEASER_FPFH "Build TEASER++ wrappers for PCL FPFH estimation." ON)
 option(BUILD_MATLAB_BINDINGS "Build MATLAB bindings" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 option(BUILD_DOC "Build documentation" ON)
@@ -53,6 +53,7 @@ if (BUILD_TEASER_FPFH)
 
     # PCL
     find_package(PCL 1.8 QUIET REQUIRED COMPONENTS common io features kdtree)
+    include_directories(${PCL_INCLUDE_DIRS})
 endif ()
 
 # googletest
@@ -133,3 +134,12 @@ export(TARGETS ${TEASERPP_EXPORTED_TARGETS} FILE teaserpp-exports.cmake)
 install(FILES cmake/teaserppConfig.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/teaserpp
         )
+# uninstall target
+if (NOT TARGET uninstall)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+                   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+                   IMMEDIATE @ONLY)
+
+    add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P
+                      ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif ()
